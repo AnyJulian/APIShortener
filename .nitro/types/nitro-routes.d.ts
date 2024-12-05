@@ -19,6 +19,7 @@ declare module "nitropack/types" {
     }
     '/links/:slug': {
       'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/links/[slug].delete').default>>>>
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/links/[slug].get').default>>>>
       'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/links/[slug].put').default>>>>
     }
     '/tags': {

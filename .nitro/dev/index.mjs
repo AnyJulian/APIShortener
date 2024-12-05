@@ -19,6 +19,7 @@ import { provider, isWindows } from 'file:///Users/charlesoudin/Desktop/Bureau/A
 import { klona } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/klona/dist/index.mjs';
 import { snakeCase } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/scule/dist/index.mjs';
 import { eq } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/drizzle-orm/index.js';
+import { nanoid } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/nanoid/index.js';
 import { pgTable, text, integer, timestamp, primaryKey } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/drizzle-orm/pg-core/index.js';
 import { drizzle } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/drizzle-orm/node-postgres/index.js';
 
@@ -178,6 +179,7 @@ const _lazy_DTuMpi = () => Promise.resolve().then(function () { return links_del
 const _lazy_x2c1On = () => Promise.resolve().then(function () { return links_get$1; });
 const _lazy_O1uQaU = () => Promise.resolve().then(function () { return links_post$1; });
 const _lazy_rNbEEL = () => Promise.resolve().then(function () { return _slug__delete$1; });
+const _lazy_gm3zvs = () => Promise.resolve().then(function () { return _slug__get$1; });
 const _lazy_OAx9G3 = () => Promise.resolve().then(function () { return _slug__put$1; });
 const _lazy_zHFGre = () => Promise.resolve().then(function () { return tags_delete$1; });
 const _lazy_IFcMeM = () => Promise.resolve().then(function () { return tags_get$1; });
@@ -193,6 +195,7 @@ const handlers = [
   { route: '/links', handler: _lazy_x2c1On, lazy: true, middleware: false, method: "get" },
   { route: '/links', handler: _lazy_O1uQaU, lazy: true, middleware: false, method: "post" },
   { route: '/links/:slug', handler: _lazy_rNbEEL, lazy: true, middleware: false, method: "delete" },
+  { route: '/links/:slug', handler: _lazy_gm3zvs, lazy: true, middleware: false, method: "get" },
   { route: '/links/:slug', handler: _lazy_OAx9G3, lazy: true, middleware: false, method: "put" },
   { route: '/tags', handler: _lazy_zHFGre, lazy: true, middleware: false, method: "delete" },
   { route: '/tags', handler: _lazy_IFcMeM, lazy: true, middleware: false, method: "get" },
@@ -1026,7 +1029,7 @@ const links_delete$1 = /*#__PURE__*/Object.freeze({
 
 const link_tags = pgTable("link_tags", {
   link_slug: text().references(() => links.slug).notNull(),
-  tag_id: integer().references(() => tags.id).notNull()
+  tag_id: integer().references(() => tags.id)
 }, (columns) => ({
   pk: primaryKey({ columns: [columns.link_slug, columns.tag_id] })
 }));
@@ -1064,17 +1067,22 @@ const links_get$1 = /*#__PURE__*/Object.freeze({
   default: links_get
 });
 
+function generateShortSlug() {
+  return nanoid(6);
+}
 const links_post = defineEventHandler(async (event) => {
   const db = useDrizzle();
   const body = await readBody(event);
   console.log("Request body:", body);
+  const slug = generateShortSlug();
   const newLink = await db.insert(links).values({
     url: String(body.url),
-    slug: String(body.slug),
+    slug,
+    // Utiliser le slug court généré
     title: String(body.title),
     max_visits: body.max_visits,
     available_at: /* @__PURE__ */ new Date(),
-    expired_at: body.expired_at ? new Date(body.expired_at) : null,
+    expired_at: null,
     created_at: /* @__PURE__ */ new Date(),
     update_at: /* @__PURE__ */ new Date()
   }).returning();
@@ -1082,9 +1090,7 @@ const links_post = defineEventHandler(async (event) => {
   if (Array.isArray(body.tag_id) && body.tag_id.length > 0) {
     const tagValues = body.tag_id.map((tag_id) => ({
       link_slug: newLink[0].slug,
-      // Utilisez le slug du lien nouvellement créé
       tag_id: Number(tag_id)
-      // Assurez-vous que tag_id est un nombre
     }));
     console.log("Inserting tag associations:", tagValues);
     try {
@@ -1094,9 +1100,9 @@ const links_post = defineEventHandler(async (event) => {
       console.error("Error inserting tag associations:", error);
     }
   } else {
-    console.log("No tag IDs to insert.");
+    console.log("No tag IDs provided, skipping tag association.");
   }
-  return { body };
+  return { body: { slug: newLink[0].slug, url: newLink[0].url } };
 });
 
 const links_post$1 = /*#__PURE__*/Object.freeze({
@@ -1115,6 +1121,22 @@ const _slug__delete = defineEventHandler(async (event) => {
 const _slug__delete$1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   default: _slug__delete
+});
+
+const _slug__get = defineEventHandler(async (event) => {
+  const db = useDrizzle();
+  const slug = getRouterParam(event, "slug");
+  const result = await db.select().from(links).where(eq(links.slug, slug)).limit(1);
+  if (result.length === 0) {
+    return { statusCode: 404, body: { message: "Link not found" } };
+  }
+  const originalUrl = result[0].url;
+  return sendRedirect(event, originalUrl);
+});
+
+const _slug__get$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: _slug__get
 });
 
 const _slug__put = defineEventHandler(async (event) => {

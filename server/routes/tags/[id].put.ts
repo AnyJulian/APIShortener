@@ -5,8 +5,8 @@ import { useDrizzle } from "~/utils/drizzle";
 export default defineEventHandler(async event => {
     const db = useDrizzle()
     const body = await readBody(event)
-    const id = getRouterParam(event, 'id')
-    // const id = Number(getRouterParam(event, 'id'))
+    // const id = getRouterParam(event, 'id')
+    const id = Number(getRouterParam(event, 'id'))
 
     console.log(body)
   

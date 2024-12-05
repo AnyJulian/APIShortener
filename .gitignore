@@ -1,0 +1,13 @@
+# Never commit node_modules to git. It's a bad practice, and slower.
+node_modules
+# Ignore the dist directory, it's the output of the build process
+dist
+.data
+.nitro
+.cache
+# Ignore the .output directory, it's the output of the build process
+.output
+# Do not commit .env file !! May contain sensitive data
+.env
+# Do not commit postgres-data directory, it contains the database data necessary when running the container again
+postgres-data

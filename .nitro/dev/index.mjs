@@ -1107,8 +1107,9 @@ const links_post$1 = /*#__PURE__*/Object.freeze({
 const _slug__delete = defineEventHandler(async (event) => {
   const db = useDrizzle();
   const slug = getRouterParam(event, "slug");
-  const results = await db.delete(links).where(eq(links.slug, slug));
-  return results;
+  await db.delete(link_tags).where(eq(link_tags.link_slug, slug));
+  await db.delete(links).where(eq(links.slug, slug));
+  return { statusCode: 200, body: { message: "Link deleted successfully" } };
 });
 
 const _slug__delete$1 = /*#__PURE__*/Object.freeze({

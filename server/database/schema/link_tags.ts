@@ -8,3 +8,4 @@ export const link_tags = pgTable('link_tags', {
 }, (columns) => ({
     pk: primaryKey({ columns: [columns.link_slug, columns.tag_id] }),
 }));
+

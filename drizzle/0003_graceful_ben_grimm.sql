@@ -1,1 +1,0 @@
--- ALTER TABLE "visits" ALTER COLUMN "id" SET DATA TYPE integer;

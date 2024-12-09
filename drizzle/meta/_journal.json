@@ -2,40 +2,5 @@
   "version": "7",
   "dialect": "postgresql",
   "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1730383267963,
-      "tag": "0000_round_sersi",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1730383746798,
-      "tag": "0001_lame_mentor",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1732977868230,
-      "tag": "0002_curly_silvermane",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1732977978383,
-      "tag": "0003_graceful_ben_grimm",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1733394013868,
-      "tag": "0004_numerous_marvel_apes",
-      "breakpoints": true
-    }
   ]
 }

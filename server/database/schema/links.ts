@@ -12,3 +12,6 @@ export const links = pgTable('links', {
   created_at: timestamp().notNull(),
   update_at: timestamp().notNull(),
 });
+
+
+//test

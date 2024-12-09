@@ -20,8 +20,9 @@ import { klona } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/API
 import { snakeCase } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/scule/dist/index.mjs';
 import { eq } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/drizzle-orm/index.js';
 import { nanoid } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/nanoid/index.js';
-import { pgTable, text, integer, timestamp, primaryKey } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/drizzle-orm/pg-core/index.js';
+import { pgTable, text, integer, timestamp, uuid, primaryKey } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/drizzle-orm/pg-core/index.js';
 import { drizzle } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/drizzle-orm/node-postgres/index.js';
+import { v4 } from 'file:///Users/charlesoudin/Desktop/Bureau/API%20SHORT/APIShortener/node_modules/uuid/dist/esm/index.js';
 
 function hasReqHeader(event, name, includes) {
   const value = getRequestHeader(event, name);
@@ -179,13 +180,14 @@ const _lazy_DTuMpi = () => Promise.resolve().then(function () { return links_del
 const _lazy_x2c1On = () => Promise.resolve().then(function () { return links_get$1; });
 const _lazy_O1uQaU = () => Promise.resolve().then(function () { return links_post$1; });
 const _lazy_rNbEEL = () => Promise.resolve().then(function () { return _slug__delete$1; });
-const _lazy_gm3zvs = () => Promise.resolve().then(function () { return _slug__get$1; });
 const _lazy_OAx9G3 = () => Promise.resolve().then(function () { return _slug__put$1; });
 const _lazy_zHFGre = () => Promise.resolve().then(function () { return tags_delete$1; });
 const _lazy_IFcMeM = () => Promise.resolve().then(function () { return tags_get$1; });
 const _lazy_BHs5iG = () => Promise.resolve().then(function () { return tags_post$1; });
 const _lazy_cuJG09 = () => Promise.resolve().then(function () { return _id__delete$1; });
 const _lazy_Xg9QTu = () => Promise.resolve().then(function () { return _id__put$1; });
+const _lazy_GO9KsK = () => Promise.resolve().then(function () { return visits_get$1; });
+const _lazy_tQXTGh = () => Promise.resolve().then(function () { return _slug__get$1; });
 
 const handlers = [
   { route: '/auth/callback', handler: _lazy_s6phyG, lazy: true, middleware: false, method: "get" },
@@ -195,13 +197,14 @@ const handlers = [
   { route: '/links', handler: _lazy_x2c1On, lazy: true, middleware: false, method: "get" },
   { route: '/links', handler: _lazy_O1uQaU, lazy: true, middleware: false, method: "post" },
   { route: '/links/:slug', handler: _lazy_rNbEEL, lazy: true, middleware: false, method: "delete" },
-  { route: '/links/:slug', handler: _lazy_gm3zvs, lazy: true, middleware: false, method: "get" },
   { route: '/links/:slug', handler: _lazy_OAx9G3, lazy: true, middleware: false, method: "put" },
   { route: '/tags', handler: _lazy_zHFGre, lazy: true, middleware: false, method: "delete" },
   { route: '/tags', handler: _lazy_IFcMeM, lazy: true, middleware: false, method: "get" },
   { route: '/tags', handler: _lazy_BHs5iG, lazy: true, middleware: false, method: "post" },
   { route: '/tags/:id', handler: _lazy_cuJG09, lazy: true, middleware: false, method: "delete" },
-  { route: '/tags/:id', handler: _lazy_Xg9QTu, lazy: true, middleware: false, method: "put" }
+  { route: '/tags/:id', handler: _lazy_Xg9QTu, lazy: true, middleware: false, method: "put" },
+  { route: '/visits', handler: _lazy_GO9KsK, lazy: true, middleware: false, method: "get" },
+  { route: '/visits/:slug', handler: _lazy_tQXTGh, lazy: true, middleware: false, method: "get" }
 ];
 
 const serverAssets = [{"baseName":"server","dir":"/Users/charlesoudin/Desktop/Bureau/API SHORT/APIShortener/server/assets"}];
@@ -985,8 +988,10 @@ const tags = pgTable("tags", {
 });
 
 const visits = pgTable("visits", {
-  id: integer().primaryKey(),
-  link_id: text().notNull(),
+  id: uuid().primaryKey(),
+  // Utiliser un UUID comme clé primaire
+  slug: text(),
+  link_id: text(),
   created_at: timestamp().notNull(),
   ip: text().notNull(),
   user_agent: text().notNull()
@@ -1102,6 +1107,8 @@ const links_post = defineEventHandler(async (event) => {
   } else {
     console.log("No tag IDs provided, skipping tag association.");
   }
+  console.log("Type of tag_id:", typeof body.tag_id);
+  console.log("Is tag_id an array?", Array.isArray(body.tag_id));
   return { body: { slug: newLink[0].slug, url: newLink[0].url } };
 });
 
@@ -1121,22 +1128,6 @@ const _slug__delete = defineEventHandler(async (event) => {
 const _slug__delete$1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   default: _slug__delete
-});
-
-const _slug__get = defineEventHandler(async (event) => {
-  const db = useDrizzle();
-  const slug = getRouterParam(event, "slug");
-  const result = await db.select().from(links).where(eq(links.slug, slug)).limit(1);
-  if (result.length === 0) {
-    return { statusCode: 404, body: { message: "Link not found" } };
-  }
-  const originalUrl = result[0].url;
-  return sendRedirect(event, originalUrl);
-});
-
-const _slug__get$1 = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  default: _slug__get
 });
 
 const _slug__put = defineEventHandler(async (event) => {
@@ -1216,5 +1207,43 @@ const _id__put = defineEventHandler(async (event) => {
 const _id__put$1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   default: _id__put
+});
+
+const visits_get = defineEventHandler(async (event) => {
+  const db = useDrizzle();
+  const results = await db.select().from(visits);
+  return results;
+});
+
+const visits_get$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: visits_get
+});
+
+const _slug__get = defineEventHandler(async (event) => {
+  const db = useDrizzle();
+  const slug = getRouterParam(event, "slug");
+  const result = await db.select().from(links).where(eq(links.slug, slug)).limit(1);
+  if (result.length === 0) {
+    return { statusCode: 404, body: { message: "Link not found" } };
+  }
+  const originalUrl = result[0].url;
+  const ip = event.node.req.headers["x-forwarded-for"] || event.node.req.connection.remoteAddress || "unknown";
+  const userAgent = event.node.req.headers["user-agent"];
+  await db.insert(visits).values({
+    id: v4(),
+    // Utiliser le slug comme identifiant du lien
+    created_at: /* @__PURE__ */ new Date(),
+    slug,
+    link_id: slug,
+    ip,
+    user_agent: userAgent
+  });
+  return sendRedirect(event, originalUrl);
+});
+
+const _slug__get$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: _slug__get
 });
 //# sourceMappingURL=index.mjs.map

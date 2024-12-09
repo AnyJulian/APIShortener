@@ -47,6 +47,8 @@ export default defineEventHandler(async event => {
     } else {
         console.log("No tag IDs provided, skipping tag association.");
     }
+    console.log("Type of tag_id:", typeof body.tag_id);
+console.log("Is tag_id an array?", Array.isArray(body.tag_id));
 
     return { body: { slug: newLink[0].slug, url: newLink[0].url } }; // Retourner le slug et l'URL
 });

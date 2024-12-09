@@ -19,17 +19,22 @@ declare module "nitropack/types" {
     }
     '/links/:slug': {
       'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/links/[slug].delete').default>>>>
-      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/links/[slug].get').default>>>>
-      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/links/[slug].put').default>>>>
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/visits/[slug].getult>>>>
     }
     '/tags': {
-      'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/tags.delete').default>>>>
+      'delete': Simplify<Serialize<Awaited<ReturnType<typeof impor../../server/routes/visits/[slug].gett>>>>
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/tags.get').default>>>>
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/tags.post').default>>>>
     }
     '/tags/:id': {
       'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/tags/[id].delete').default>>>>
       'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/tags/[id].put').default>>>>
+    }
+    '/visits': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/visits.get').default>>>>
+    }
+    '/visits/:slug': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/routes/visits/[slug].get').default>>>>
     }
   }
 }

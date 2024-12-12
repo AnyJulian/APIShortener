@@ -27,15 +27,14 @@ export default eventHandler(async (event) => {
 
     // Regrouper les résultats par lien
     const groupedResults = results.reduce((acc, row) => {
-        const { slug, url, title, tag_id, tag_name, tag_color } = row; // Extraire les données
+        const { slug, url, title, tag_id, tag_name, tag_color } = row; 
 
-        // Vérifier si le lien existe déjà dans l'accumulateur
         if (!acc[slug]) {
             acc[slug] = {
                 slug,
                 url,
                 title,
-                tags: [], // Initialiser le tableau des tags
+                tags: [], 
             };
         }
 

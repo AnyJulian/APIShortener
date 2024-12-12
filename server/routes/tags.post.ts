@@ -19,5 +19,5 @@ export default defineEventHandler(async event => {
     })
     .returning()
   
-    return { body }
+    return body 
   });

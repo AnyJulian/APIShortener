@@ -12,7 +12,6 @@ export default defineEventHandler(async event => {
 
     //vérif de s'il est conecté
     isAuth(event)
-
     const db = useDrizzle();
     const body = await readBody(event);
     console.log("Request body:", body);
@@ -24,7 +23,6 @@ export default defineEventHandler(async event => {
     const newLink = await db.insert(links).values({
         url: String(body.url),
         title: String(body.title),
-
         available_at: new Date(),
         created_at: new Date(),
         update_at: new Date(),
@@ -34,9 +32,9 @@ export default defineEventHandler(async event => {
 
     console.log("New link slug:", newLink[0].slug);
 
-    // Gestion des tags (si nécessaire)
+    // Gestion des tags 
     if (Array.isArray(body.tag_id) && body.tag_id.length > 0) {
-        const tagValues = body.tag_id.map(tag_id => ({
+        var tagValues = body.tag_id.map(tag_id => ({
             link_slug: newLink[0].slug,
             tag_id: Number(tag_id),
         }));
@@ -53,5 +51,15 @@ export default defineEventHandler(async event => {
         console.log("No tag IDs provided, skipping tag association.");
     }
 
-    return { body: { slug: newLink[0].slug, url: newLink[0].url } }; // Retourner le slug et l'URL
+    return {
+        url: newLink[0].url,
+        slug: newLink[0].slug,
+        title: newLink[0].title,
+        maxVisits: newLink[0].max_visits || null,
+        availableAt: newLink[0].available_at || null,
+        expiresAt: newLink[0].expired_at || null,
+        tags: tagValues,
+        createdAt: newLink[0].created_at.toISOString(),
+        updatedAt: newLink[0].update_at.toISOString(),
+    };
 });

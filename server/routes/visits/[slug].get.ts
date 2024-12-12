@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid'; // Importer la fonction pour générer des 
 
 export default defineEventHandler(async (event) => {
     const db = useDrizzle();
-    const slug = getRouterParam(event, 'slug'); // Récupérer le slug depuis l'URL
+    const slug = getRouterParam(event, 'slug'); 
 
     // Rechercher le lien par slug
     const result = await db.select().from(links).where(eq(links.slug, slug)).limit(1);
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     const userAgent = event.node.req.headers['user-agent']; // Récupérer le user agent
 
     await db.insert(visits).values({
-        id: uuidv4(), // Utiliser le slug comme identifiant du lien
+        id: uuidv4(),
         created_at: new Date(),
         slug: slug,
         link_id: slug,

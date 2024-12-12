@@ -40,7 +40,7 @@ export default defineEventHandler(async event => {
 
         try {
             await db.insert(link_tags).values(tagValues);
-            console.log("Tag associations inserted successfully.");
+           
         } catch (error) {
             console.error("Error inserting tag associations:", error);
         }

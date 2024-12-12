@@ -1,13 +1,18 @@
-import { links } from "~/database/schema";
+import { links, tags } from "~/database/schema";
 import { link_tags } from "~/database/schema/link_tags";
 import { useDrizzle } from "~/utils/drizzle";
 import { nanoid } from 'nanoid';
+import { isAuth } from "~/utils/authjwt";
 
 function generateShortSlug(): string {
     return nanoid(6); // Génère un slug de 6 caractères
 }
 
 export default defineEventHandler(async event => {
+
+    //vérif de s'il est conecté
+    isAuth(event)
+
     const db = useDrizzle();
     const body = await readBody(event);
     console.log("Request body:", body);
@@ -18,14 +23,14 @@ export default defineEventHandler(async event => {
     // Insérer le lien
     const newLink = await db.insert(links).values({
         url: String(body.url),
-        slug: slug, // Utiliser le slug court généré
         title: String(body.title),
-        max_visits: body.max_visits,
+
         available_at: new Date(),
-        expired_at: null,
         created_at: new Date(),
         update_at: new Date(),
+        slug : slug,
     }).returning();
+
 
     console.log("New link slug:", newLink[0].slug);
 

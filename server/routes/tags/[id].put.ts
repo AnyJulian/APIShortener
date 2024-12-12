@@ -1,8 +1,13 @@
 import { eq } from "drizzle-orm";
 import { tags } from "~/database/schema";
+import { isAuth } from "~/utils/authjwt";
 import { useDrizzle } from "~/utils/drizzle";
 
 export default defineEventHandler(async event => {
+
+    isAuth(event)
+
+
     const db = useDrizzle()
     const body = await readBody(event)
     // const id = getRouterParam(event, 'id')

@@ -1,5 +1,4 @@
 import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { tags } from "./tags";
 
 
 export const links = pgTable('links', {
@@ -8,7 +7,7 @@ export const links = pgTable('links', {
   title: text().notNull(),
   max_visits: integer(),
   available_at: timestamp().notNull(),
-  expired_at: timestamp(),
+  expired_at: timestamp("expired_at"),
   created_at: timestamp().notNull(),
   update_at: timestamp().notNull(),
 });

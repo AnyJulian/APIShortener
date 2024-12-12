@@ -9,11 +9,11 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.7",
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.27.2",
+    "drizzle-kit": "^0.30.0",
     "nitropack": "^2.10.4"
   },
   "dependencies": {
-    "drizzle-orm": "^0.37.0",
+    "drizzle-orm": "^0.38.1",
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^5.0.9",
     "pg": "^8.13.1",

@@ -2,9 +2,13 @@ import { useDrizzle } from "~/utils/drizzle";
 import { links } from "~/database/schema/links";
 import { link_tags } from "~/database/schema/link_tags";
 import { tags } from "~/database/schema/tags";
-import { eq } from "drizzle-orm"; // Assurez-vous d'importer eq
+import { eq } from "drizzle-orm";
+import { isAuth } from "~/utils/authjwt";
 
 export default eventHandler(async (event) => {
+
+    isAuth(event)
+
     const db = useDrizzle();
 
     // Effectuer une jointure pour récupérer les liens avec leurs tags
@@ -18,8 +22,8 @@ export default eventHandler(async (event) => {
             tag_color: tags.color,
         })
         .from(links)
-        .innerJoin(link_tags, eq(link_tags.link_slug, links.slug)) // Utiliser eq ici
-        .innerJoin(tags, eq(tags.id, link_tags.tag_id)); // Utiliser eq ici
+        .innerJoin(link_tags, eq(link_tags.link_slug, links.slug)) 
+        .innerJoin(tags, eq(tags.id, link_tags.tag_id)); 
 
     // Regrouper les résultats par lien
     const groupedResults = results.reduce((acc, row) => {

@@ -11,8 +11,6 @@ export default defineEventHandler(async event => {
     const db = useDrizzle()
     const body = await readBody(event)
     const slug = getRouterParam(event, 'slug')
-
-    console.log(body)
   
     await db.update(links)
         .set({ title: body.title, update_at: new Date() })
